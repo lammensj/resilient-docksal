@@ -1,0 +1,17 @@
+version: "2.1"
+
+services:
+  # CLI
+  cli:
+    environment:
+      # Variables grabbed from project + global docksal.env
+      - VIRTUAL_HOST
+      # Variables grabbed from docksal-local.env
+      - ROBO_CONFIG
+    ports:
+      - '2223:22'
+  # MailHog
+  mail:
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: mail

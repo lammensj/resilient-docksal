@@ -1,0 +1,5 @@
+apache/*
+mysql/*
+php/*
+
+!**/default.*
