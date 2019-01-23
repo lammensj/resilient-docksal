@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+
+## Initializes (download and install) the project.
+##
+## Usage: fin init
+
+if [[ $DOCKER_RUNNING == "true" ]] ; then
+  fin reset -f
+else
+  fin up
+fi
+
+fin download
+fin install

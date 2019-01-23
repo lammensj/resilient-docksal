@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e
+
+## Downloads the project files.
+##
+## Usage: fin download
+
+fin exec /var/www/vendor/bin/robo resilient:download

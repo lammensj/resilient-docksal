@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e
+
+## Installs the project.
+##
+## Usage: fin install
+
+fin exec /var/www/vendor/bin/robo resilient:install

@@ -3,3 +3,9 @@ composer.phar
 /composer.*.json
 /vendor/
 
+# Code quality
+/grumphp.yml
+/phpstan.neon
+
+# Setup
+/db
