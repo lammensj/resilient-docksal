@@ -1,0 +1,58 @@
+{
+    "name": "lammensj/resilient-docksal",
+    "description": "A web project using Docksal as environment.",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": ""
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Resilient\\": "./.docksal/src"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@composer exec robo resilient:scaffold"
+        ],
+        "post-update-cmd": [
+            "@composer exec robo resilient:scaffold"
+        ],
+        "post-create-project-cmd": [
+            "@composer exec robo resilient:scaffold"
+        ]
+    },
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "^1.0",
+        "maglnet/composer-require-checker": "^1.1",
+        "nikic/php-parser": "^4.1",
+        "phpmd/phpmd": "^2.6",
+        "phpro/grumphp": "^0.14.3",
+        "phpstan/phpstan-deprecation-rules": "^0.10",
+        "povils/phpmnd": "^2.0",
+        "roave/security-advisories": "dev-master",
+        "sebastian/phpcpd": "^4.1",
+        "sensiolabs/security-checker": "^5.0",
+        "squizlabs/php_codesniffer": "^3.4",
+        "symfony/var-dumper": "^4.2",
+        "wikimedia/composer-merge-plugin": "dev-master"
+    },
+    "extra": {
+        "merge-plugin": {
+            "include": [
+                "composer.*.json"
+            ]
+        }
+    },
+    "require": {
+        "consolidation/robo": "~1"
+    }
+}
