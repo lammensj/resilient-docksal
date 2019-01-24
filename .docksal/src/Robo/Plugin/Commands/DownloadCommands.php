@@ -110,18 +110,26 @@ class DownloadCommands extends AbstractCommands
     private function loadGrumphpTasks()
     {
         $grumphpTasks = [];
-        $grumphpTasks[] = $this->taskFilesystemStack()
-          ->mirror(
-            sprintf('%s/assets/%s/grumphp', $this->setupPath, $this->type),
-            $this->projectRoot,
-            null,
-            ['override' => true]
-          );
-        $grumphpTasks[] = $this->taskReplaceInFile(
-          sprintf('%s/grumphp.yml', $this->projectRoot)
-        )
-          ->from('[jira_code]')
-          ->to($this->getConfigValue('jira_code'));
+
+        $grumphpDir = sprintf(
+          '%s/assets/%s/grumphp',
+          $this->setupPath,
+          $this->type
+        );
+        if (file_exists($grumphpDir)) {
+            $grumphpTasks[] = $this->taskFilesystemStack()
+              ->mirror(
+                $grumphpDir,
+                $this->projectRoot,
+                null,
+                ['override' => true]
+              );
+            $grumphpTasks[] = $this->taskReplaceInFile(
+              sprintf('%s/grumphp.yml', $this->projectRoot)
+            )
+              ->from('[jira_code]')
+              ->to($this->getConfigValue('jira_code'));
+        }
 
         return $grumphpTasks;
     }
@@ -181,12 +189,11 @@ class DownloadCommands extends AbstractCommands
             if (file_exists(sprintf('%s/composer.json', $this->frmwrkPath))) {
                 $drupalTasks[] = $this->taskComposerInstall()
                   ->workingDir($this->frmwrkPath);
-            } else { 
-                $target = $this->getConfigValue('frmwrk_root');
+            } else {
                 $drupalTasks[] = $this->taskComposerCreateProject()
                   ->workingDir($this->projectRoot)
                   ->source(self::DRUPAL_PROJECT)
-                  ->target($target);
+                  ->target($this->getConfigValue('frmwrk_root'));
             }
 
             // Copy local settings files into Drupal directory.
@@ -198,6 +205,21 @@ class DownloadCommands extends AbstractCommands
             $drupalTasks[] = $this->taskCopyDir(
               [$source => $defaultFolderPath]
             );
+
+            // Insert database credentials.
+            $localSettingsFilePath = sprintf('%s/settings.local.php', $defaultFolderPath);
+            $drupalTasks[] = $this->taskReplaceInFile($localSettingsFilePath)
+              ->from('INSERT_DB_HOST')
+              ->to($this->getConfigValue('database.host'));
+            $drupalTasks[] = $this->taskReplaceInFile($localSettingsFilePath)
+              ->from('INSERT_DB_USER')
+              ->to($this->getConfigValue('database.user'));
+            $drupalTasks[] = $this->taskReplaceInFile($localSettingsFilePath)
+              ->from('INSERT_DB_PASSWORD')
+              ->to($this->getConfigValue('database.password'));
+            $drupalTasks[] = $this->taskReplaceInFile($localSettingsFilePath)
+              ->from('INSERT_DB_NAME')
+              ->to($this->getConfigValue('database.name'));
 
             // Enable including local.settings.php.
             $settingsFilePath = sprintf('%s/settings.php', $defaultFolderPath);

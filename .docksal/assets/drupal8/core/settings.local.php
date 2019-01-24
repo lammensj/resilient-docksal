@@ -7,10 +7,10 @@
 // Add your database configuration here (and uncomment the block).
 $databases['default']['default'] = array(
   'driver' => 'mysql',
-  'host' => 'db',
-  'username' => 'user',
-  'password' => 'user',
-  'database' => 'default',
+  'host' => 'INSERT_DB_HOST',
+  'username' => 'INSERT_DB_USER',
+  'password' => 'INSERT_DB_PASSWORD',
+  'database' => 'INSERT_DB_NAME',
   'prefix' => '',
 );
 

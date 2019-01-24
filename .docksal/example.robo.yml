@@ -8,3 +8,9 @@ command:
     app_root: 'app'
     # Define the JIRA code.
     jira_code: 'CUSTOMIZEME'
+    # Define the database credentials
+    database:
+      host: 'db'
+      user: 'user'
+      password: 'user'
+      name: 'default'
