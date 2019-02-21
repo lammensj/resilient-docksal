@@ -16,6 +16,11 @@ class DownloadCommands extends AbstractCommands
 {
 
     const DRUPAL_PROJECT = 'lammensj/drupal-project:^2.0';
+    const WP_PROJECT = 'wordplate/wordplate';
+    const WP_CLI = 'wp-cli/wp-cli';
+    const WP_CLI_PACKAGE = 'wp-cli/package-command';
+    const WP_CLI_DOTENV = 'aaemnnosttv/wp-cli-dotenv-command';
+    const WP_TIMBER_ST = 'upstatement/timber-starter-theme:dev-master';
 
     /**
      * Downloads the project.
@@ -74,6 +79,9 @@ class DownloadCommands extends AbstractCommands
           }
         );
         switch ($this->type) {
+            case 'wp':
+                $this->collection->addTaskList($this->loadWordpressTasks());
+                break;
             case 'drupal8':
             default:
                 $this->collection->addTaskList($this->loadDrupal8Tasks());
@@ -163,6 +171,83 @@ class DownloadCommands extends AbstractCommands
         }
 
         return $pckgTasks;
+    }
+
+    /**
+     * Load tasks for downloading Wordpress.
+     *
+     * @return array
+     *   Returns an array of tasks for Wordpress.
+     *
+     * @throws \Robo\Exception\TaskException
+     */
+    private function loadWordpressTasks()
+    {
+        $wpTasks = [];
+
+        $coreFolderPath = sprintf(
+          '%s/%s',
+          $this->frmwrkPath,
+          $this->getConfigValue('app_root')
+        );
+
+        if (!file_exists(
+          sprintf('%s/wp-load.php', $coreFolderPath)
+        )) {
+            if (file_exists(sprintf('%s/composer.json', $this->frmwrkPath))) {
+                $wpTasks[] = $this->taskComposerInstall()
+                  ->workingDir($this->frmwrkPath);
+            } else {
+                $wpTasks[] = $this->taskComposerCreateProject()
+                  ->workingDir($this->projectRoot)
+                  ->source(self::WP_PROJECT)
+                  ->target($this->getConfigValue('frmwrk_root'));
+
+                $wpTasks[] = $this->taskComposerRequire()
+                  ->workingDir($this->frmwrkPath)
+                  ->dependency(self::WP_CLI)
+                  ->dependency(self::WP_CLI_PACKAGE)
+                  ->dependency(self::WP_TIMBER_ST);
+            }
+
+            // Install DotEnv package for WP CLI.
+            $wpCli = sprintf('%s/vendor/bin/wp', $this->frmwrkPath);
+            $wpTasks[] = $this->taskExec(
+              sprintf(
+                '%s package install %s',
+                $wpCli,
+                self::WP_CLI_DOTENV
+              )
+            );
+
+            // Update environment variables.
+            $env = [
+              'DB_NAME' => $this->getConfigValue('database.name'),
+              'DB_USER' => $this->getConfigValue('database.user'),
+              'DB_PASSWORD' => $this->getConfigValue('database.password'),
+              'DB_HOST' => $this->getConfigValue('database.host'),
+              'WP_ENV' => 'local',
+            ];
+            $dotEnvFile = sprintf('%s/.env', $this->frmwrkPath);
+            $execStack = $this->taskExecStack();
+            foreach ($env as $key => $value) {
+                $execStack->exec(
+                  sprintf(
+                    '%s dotenv set %s %s --file=%s',
+                    $wpCli,
+                    $key,
+                    $value,
+                    $dotEnvFile
+                  )
+                );
+            }
+            $execStack->exec(
+              sprintf('%s dotenv salts generate --file=%s', $wpCli, $dotEnvFile)
+            );
+            $wpTasks[] = $execStack;
+        }
+
+        return $wpTasks;
     }
 
     /**
