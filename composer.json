@@ -53,6 +53,7 @@
         }
     },
     "require": {
-        "consolidation/robo": "~1"
+        "consolidation/robo": "~1",
+        "php-di/php-di": "^6.0"
     }
 }

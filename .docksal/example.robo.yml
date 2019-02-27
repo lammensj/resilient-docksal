@@ -14,3 +14,11 @@ command:
       user: 'user'
       password: 'user'
       name: 'default'
+    # Define the site details
+    site:
+      name: 'Resilient'
+      email: 'info@resilient.io'
+      account:
+        name: 'admin'
+        email: 'admin@resilient.io'
+        password: 'admin@resilient.io'

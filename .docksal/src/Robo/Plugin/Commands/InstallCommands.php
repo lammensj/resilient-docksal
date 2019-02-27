@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Resilient\Robo\Plugin\Commands;
 
-use Symfony\Component\Finder\Finder;
+use Robo\Collection\CollectionBuilder;
 
 /**
  * Class InstallCommands.
@@ -24,80 +24,35 @@ class InstallCommands extends AbstractCommands
      *
      * @return \Robo\Collection\CollectionBuilder
      *   Returns a collection builder to run.
+     *
+     * @throws \DI\NotFoundException
      */
-    public function install()
+    public function install(): CollectionBuilder
     {
         $this->initialize();
-        $this->collection->addCode(
-          function () {
+        $type = $this->configFactory->get('project_type');
+        $pluginConfig = [
+          'collection_builder' => $this->collectionBuilder,
+        ];
+
+        $this->collectionBuilder->addCode(
+          function () use ($type) {
               $this->say(
-                sprintf('Installing project type \'%s\'...', $this->type)
+                sprintf('Installing project type \'%s\'...', $type)
               );
           }
         );
-        switch ($this->type) {
-            case 'drupal8':
-            default:
-                $this->collection->addTaskList($this->loadDrupal8Tasks());
-                break;
-        }
-        $this->collection->addCode(
-          function () {
+        /** @var \Resilient\Core\RoboPlugin\RoboPluginInstallerInterface $plugin */
+        $plugin = $this->roboPluginFactory->createInstance($type, $pluginConfig);
+        $this->collectionBuilder->addTaskList($plugin->install());
+        $this->collectionBuilder->addCode(
+          function () use ($type) {
               $this->say(
-                sprintf('Installing project type \'%s\'... DONE', $this->type)
+                sprintf('Installing project type \'%s\'... DONE', $type)
               );
           }
         );
 
-        return $this->collection;
-    }
-
-    /**
-     * Load tasks for installing Drupal 8.
-     *
-     * @return array
-     *   Returns an array of tasks for Drupal 8.
-     */
-    private function loadDrupal8Tasks()
-    {
-        $drupalTasks = [];
-
-        // Include the necessary external tasks.
-        $drushStackClass = '\Boedah\Robo\Task\Drush\DrushStack';
-
-        $drupalTasks[] = $this->task($drushStackClass)
-          ->drupalRootDirectory($this->frmwrkPath)
-          ->drush('sql-drop');
-
-        $dbFiles = Finder::create()
-          ->files()
-          ->name('drupal8.sql*')
-          ->in($this->projectRoot);
-        if ($dbFiles->hasResults()) {
-            $drupalTasks[] = $this->task($drushStackClass)
-              ->drupalRootDirectory($this->frmwrkPath)
-              ->drush(
-                sprintf('sqlq --file=%s', reset($dbFiles)->getPathname())
-              );
-        } elseif (file_exists(
-          sprintf('%s/config/sync/core.extension.yml', $this->frmwrkPath)
-        )) {
-            $drupalTasks[] = $this->task($drushStackClass)
-              ->drupalRootDirectory($this->frmwrkPath)
-              ->drush(
-                sprintf(
-                  'si config_installer config_installer_sync_configure_form.sync_directory=%s/config/sync',
-                  $this->frmwrkPath
-                )
-              );
-        }
-        else {
-            $drupalTasks[] = $this->task($drushStackClass)
-              ->drupalRootDirectory($this->frmwrkPath)
-              ->siteInstall('resilient')
-              ->drush('entup');
-        }
-
-        return $drupalTasks;
+        return $this->collectionBuilder;
     }
 }

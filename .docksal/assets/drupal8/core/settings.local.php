@@ -5,14 +5,14 @@
  */
 
 // Add your database configuration here (and uncomment the block).
-$databases['default']['default'] = array(
+$databases['default']['default'] = [
   'driver' => 'mysql',
   'host' => 'INSERT_DB_HOST',
   'username' => 'INSERT_DB_USER',
   'password' => 'INSERT_DB_PASSWORD',
   'database' => 'INSERT_DB_NAME',
   'prefix' => '',
-);
+];
 
 // Set the paths to user files and tmp directory.
 //$settings['file_private_path'] = '/var/www/_www/sites/default/files/private';
@@ -25,7 +25,7 @@ $settings['file_chmod_file'] = 0666;
 // Reverse proxy configuration (Docksal's vhost-proxy)
 if (PHP_SAPI !== 'cli') {
   $settings['reverse_proxy'] = TRUE;
-  $settings['reverse_proxy_addresses'] = array($_SERVER['REMOTE_ADDR']);
+  $settings['reverse_proxy_addresses'] = [$_SERVER['REMOTE_ADDR']];
   // HTTPS behind reverse-proxy
   if (
     isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' &&
@@ -64,13 +64,6 @@ $config['system.performance']['js']['gzip'] = FALSE;
 $settings['hash_salt'] = 'development_salt';
 
 // Disable readonly mode.
-$settings['config_readonly'] = FALSE;
-
-// Require the site loads over https if config value set.
-//if ($_SERVER['RESILIENT_FORCE_HTTPS'] === 'true') {
-//  if (!isset($_SERVER['HTTPS']) && php_sapi_name() != "cli") {
-//    header('HTTP/1.0 301 Moved Permanently');
-//    header('Location: https://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-//    exit();
-//  }
-//}
+if (PHP_SAPI !== 'cli') {
+  $settings['config_readonly'] = TRUE;
+}
