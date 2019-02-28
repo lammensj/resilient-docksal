@@ -97,13 +97,34 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
     }
 
     /**
-     * Prepares tasks for installing a framework.
-     *
-     * @return array
-     *   Returns an array of tasks.
+     * {@inheritdoc}
      */
     public function install(): array
     {
-        // TODO: Implement install() method.
+        $tasks = [];
+
+        $wpCli = sprintf('%s/vendor/bin/wp', $this->configFactory->get('frmwrk_path'));
+        $path = sprintf(
+          '%s/%s',
+          $this->configFactory->get('frmwrk_path'),
+          $this->configFactory->get('app_root'),
+        );
+
+        // Wipe the db.
+        $tasks[] = $this->taskExec(sprintf('%s db reset --yes', $wpCli))
+          ->option('yes')
+          ->path('path', $path, '=');
+
+        // Install Wordpress.
+        $tasks[] = $this->taskExec(sprintf('%s core install', $wpCli))
+          ->option('url', $this->configFactory->get('VIRTUAL_HOST'), '=')
+          ->option('title', $this->configFactory->get('site.name'), '=')
+          ->option('admin_user', $this->configFactory->get('site.account.name'), '=')
+          ->option('admin_email', $this->configFactory->get('site.account.email'), '=')
+          ->option('admin_password', $this->configFactory->get('site.account.password'), '=')
+          ->option('skip-email')
+          ->option('path', $path, '=');
+
+        return $tasks;
     }
 }
