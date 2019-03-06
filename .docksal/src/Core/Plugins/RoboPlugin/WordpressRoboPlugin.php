@@ -21,7 +21,8 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
     protected const WP_PROJECT = 'wordplate/wordplate';
     protected const WP_CLI = 'wp-cli/wp-cli-bundle';
     protected const WP_CLI_DOTENV = 'aaemnnosttv/wp-cli-dotenv-command';
-    protected const WP_TIMBER_ST = 'upstatement/timber-starter-theme:dev-master';
+    protected const WP_TIMBER_PLUGIN = 'wpackagist-plugin/timber-library';
+    protected const WP_TIMBER_ST = 'timber/timber';
 
     /**
      * {@inheritdoc}
@@ -39,9 +40,21 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
         if (!file_exists(
           sprintf('%s/wp-load.php', $coreFolderPath)
         )) {
+            if (!($themeRoot = $this->configFactory->get('deploy.theme_root'))) {
+                $themeDirectory = sprintf(
+                  '%s/%s',
+                  $this->configFactory->get('frmwrk_path'),
+                  $this->configFactory->get('deploy.theme_root')
+                );
+            }
+
             if (file_exists(sprintf('%s/composer.json', $this->configFactory->get('frmwrk_path')))) {
                 $wpTasks[] = $this->taskComposerInstall()
                   ->workingDir($this->configFactory->get('frmwrk_path'));
+                if ($themeRoot) {
+                    $wpTasks[] = $this->taskComposerInstall()
+                      ->workingDir($themeDirectory);
+                }
             } else {
                 $wpTasks[] = $this->taskComposerCreateProject()
                   ->workingDir($this->configFactory->get('project_root'))
@@ -50,8 +63,15 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
 
                 $wpTasks[] = $this->taskComposerRequire()
                   ->workingDir($this->configFactory->get('frmwrk_path'))
-                  ->dependency(self::WP_CLI)
-                  ->dependency(self::WP_TIMBER_ST);
+                  ->dependency(self::WP_CLI);
+
+                if ($themeRoot) {
+                    $wpTasks[] = $this->taskFilesystemStack()
+                      ->mkdir($themeDirectory);
+                    $wpTasks[] = $this->taskComposerRequire()
+                      ->workingDir($themeDirectory)
+                      ->dependency(self::WP_TIMBER_ST);
+                }
             }
 
             // Install DotEnv package for WP CLI.
@@ -105,7 +125,7 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
         $path = sprintf(
           '%s/%s',
           $this->configFactory->get('frmwrk_path'),
-          $this->configFactory->get('app_root'),
+          $this->configFactory->get('app_root')
         );
 
         // Wipe the db.

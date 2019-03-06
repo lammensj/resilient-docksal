@@ -72,21 +72,6 @@ class DownloadCommands extends AbstractCommands
           }
         );
 
-        // CircleCI.
-        $this->collectionBuilder->addCode(
-          function () {
-              $this->say('Initializing link with CircleCI...');
-          }
-        );
-        /** @var \Resilient\Core\RoboPlugin\RoboPluginDownloaderInterface $circleCi */
-        $circleCi = $this->roboPluginFactory->createInstance(RoboPluginFactoryInterface::CIRCLE_CI, $pluginConfig);
-        $this->collectionBuilder->addTaskList($circleCi->download());
-        $this->collectionBuilder->addCode(
-          function () {
-              $this->say('Initializing link with CircleCI... DONE');
-          }
-        );
-
         // Core project files.
         $this->collectionBuilder->addCode(
           function () use ($type) {
@@ -109,6 +94,21 @@ class DownloadCommands extends AbstractCommands
                   $type
                 )
               );
+          }
+        );
+
+        // CircleCI.
+        $this->collectionBuilder->addCode(
+          function () {
+              $this->say('Initializing link with CircleCI...');
+          }
+        );
+        /** @var \Resilient\Core\RoboPlugin\RoboPluginDownloaderInterface $circleCi */
+        $circleCi = $this->roboPluginFactory->createInstance(RoboPluginFactoryInterface::CIRCLE_CI, $pluginConfig);
+        $this->collectionBuilder->addTaskList($circleCi->download());
+        $this->collectionBuilder->addCode(
+          function () {
+              $this->say('Initializing link with CircleCI... DONE');
           }
         );
 
