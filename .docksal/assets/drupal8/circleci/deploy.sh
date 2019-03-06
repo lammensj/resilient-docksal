@@ -107,7 +107,7 @@ task_config_include_files() {
 #######################################
 task_config_backup() {
   runner_log_notice 'Backing up database...'
-  ${DRUSH} sql-dump --result-file=${PROJECT_ROOT}/shared/backups/${NEXT}.backup.sql --gzip -r ${DRUPAL_ROOT}
+  ${DRUSH} sql-dump --result-file=${PROJECT_ROOT}/shared/backup/${NEXT}.backup.sql --gzip -r ${DRUPAL_ROOT}
   runner_log_success 'Backing up database... DONE'
 }
 
@@ -134,10 +134,10 @@ task_config_install() {
 #######################################
 task_config_update() {
   runner_log_notice 'Updating configuration...'
-  ${DRUSH} updb -y -r ${DRUPAL_ROOT} || runner_sequence rollback && exit
-  ${DRUSH} cc drush -r ${DRUPAL_ROOT}
-  ${DRUSH} csim -y -r ${DRUPAL_ROOT} || ${DRUSH} cim -y -r ${DRUPAL_ROOT} || runner_sequence rollback && exit
-  ${DRUSH} entup -y -r ${DRUPAL_ROOT} || runner_sequence rollback && exit
+  ${DRUSH} updb -y -r ${DRUPAL_ROOT} || runner_sequence rollback
+  ${DRUSH} cc drush -r ${DRUPAL_ROOT} || runner_sequence rollback
+  ${DRUSH} csim -y -r ${DRUPAL_ROOT} || ${DRUSH} cim -y -r ${DRUPAL_ROOT} || runner_sequence rollback
+  ${DRUSH} entup -y -r ${DRUPAL_ROOT} || runner_sequence rollback
   runner_log_success 'Updating configuration... DONE'
 }
 
@@ -176,4 +176,5 @@ task_rollback() {
   ${DRUSH} sql-cli < ${PROJECT_ROOT}/shared/backup/${NEXT}.backup.sql
   gzip ${PROJECT_ROOT}/shared/backup/${NEXT}.backup.sql
   runner_log_success 'Rolling back... DONE'
+  exit
 }
