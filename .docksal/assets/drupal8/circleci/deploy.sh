@@ -75,7 +75,7 @@ task_config() {
   cp ./app/sites/default/default.settings.php ./app/sites/default/settings.php
   mkdir -p ${PROJECT_ROOT}/shared/backup
   cp ${PROJECT_ROOT}/shared/${BRANCH}.settings.private.php ./app/sites/default/settings.private.php
-  cp ${PROJECT_ROOT}/shared/${BRANCH}.salt.txt ./app/sites/default/salt.txt
+  cp ${PROJECT_ROOT}/shared/${BRANCH}.salt.txt salt.txt
 
   INCL_PRVT_SETTINGS='include $app_root . "/" . $site_path . "/settings.private.php";'
   SETTINGS_FILE=./app/sites/default/settings.php
@@ -122,7 +122,7 @@ task_config_install() {
 
     runner_log_notice 'Preserving hash salt...'
     grep -o -E '([A-Za-z0-9_-]{74})' ./app/sites/default/settings.php >> ${PROJECT_ROOT}/shared/${BRANCH}.salt.txt
-    grep -o -E '([A-Za-z0-9_-]{74})' ./app/sites/default/settings.php >> ./app/sites/default/salt.txt
+    grep -o -E '([A-Za-z0-9_-]{74})' ./app/sites/default/settings.php >> salt.txt
     runner_log_success 'Preserving hash salt... DONE'
   else
     runner_log_notice 'Site already installed... SKIPPING'
