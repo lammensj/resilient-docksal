@@ -6,6 +6,7 @@ services:
     environment:
       # Variables grabbed from project + global docksal.env
       - VIRTUAL_HOST
+      - CLI_IMAGE
       # Variables grabbed from docksal-local.env
       - ROBO_CONFIG
     ports:
