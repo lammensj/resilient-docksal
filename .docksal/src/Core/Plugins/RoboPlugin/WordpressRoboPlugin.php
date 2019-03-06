@@ -19,8 +19,7 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
 {
 
     protected const WP_PROJECT = 'wordplate/wordplate';
-    protected const WP_CLI = 'wp-cli/wp-cli';
-    protected const WP_CLI_PACKAGE = 'wp-cli/package-command';
+    protected const WP_CLI = 'wp-cli/wp-cli-bundle';
     protected const WP_CLI_DOTENV = 'aaemnnosttv/wp-cli-dotenv-command';
     protected const WP_TIMBER_ST = 'upstatement/timber-starter-theme:dev-master';
 
@@ -52,7 +51,6 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
                 $wpTasks[] = $this->taskComposerRequire()
                   ->workingDir($this->configFactory->get('frmwrk_path'))
                   ->dependency(self::WP_CLI)
-                  ->dependency(self::WP_CLI_PACKAGE)
                   ->dependency(self::WP_TIMBER_ST);
             }
 
@@ -113,7 +111,7 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
         // Wipe the db.
         $tasks[] = $this->taskExec(sprintf('%s db reset --yes', $wpCli))
           ->option('yes')
-          ->path('path', $path, '=');
+          ->option('path', $path, '=');
 
         // Install Wordpress.
         $tasks[] = $this->taskExec(sprintf('%s core install', $wpCli))
