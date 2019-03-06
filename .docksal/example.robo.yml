@@ -22,3 +22,8 @@ command:
         name: 'admin'
         email: 'admin@resilient.io'
         password: 'admin@resilient.io'
+    # Define deploy details
+    deploy:
+      repo_id: resilient/resilient
+      # Define the theme folder, relative from the framework folder. Leave empty to ignore during build.
+      theme_root: ''

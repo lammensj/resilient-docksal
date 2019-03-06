@@ -188,7 +188,7 @@ parameters:
         - twig
         - php
     phpversion:
-      project: '7.2'
+      project: '7.3'
     securitychecker:
       lockfile: ./htdocs/composer.lock
     xmllint: ~
