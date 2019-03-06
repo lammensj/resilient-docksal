@@ -4,6 +4,13 @@
 
 [Project description]
 
+## Deployment
+### Drupal
+shared folder:
+- 'files'-directory
+- master.salt.txt
+- master.settings.private.php contains: db credentials, config directory sync (`$config_directories['sync'] = '../config/sync';`) and path to hash salt (`$settings['hash_salt'] = file_get_contents(DRUPAL_ROOT . '/../salt.txt');`)
+
 ## Authors
 
 * **Jasper Lammens** - *Initial work* - [lammensj](https://github.com/lammensj)
