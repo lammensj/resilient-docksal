@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Resilient\Core\Config;
 
+use Resilient\Core\RoboPlugin\RoboPluginFactoryInterface;
 use Robo\Robo;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
@@ -114,9 +115,8 @@ class ConfigFactory implements ConfigFactoryInterface
             $errorMessages[] = '- The VIRTUAL_HOST parameter in the docksal-local.env file has not been modified.';
         }
 
-        $projectTypes = ['drupal8', 'wp', 'sf'];
         $projectType = $this->get('project_type');
-        if (!$projectType || !in_array($projectType, $projectTypes, true)) {
+        if (!$projectType || !array_key_exists($projectType, RoboPluginFactoryInterface::MAPPING)) {
             $errorMessages[] = sprintf(
               '- The project_type parameter in the robo.yml file is not set or doesn\'t have a supported site type (found %s).',
               $projectType

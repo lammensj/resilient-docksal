@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Resilient\Robo\Plugin\Commands;
 
+use Resilient\Core\RoboPlugin\RoboPluginDownloaderInterface;
 use Resilient\Core\RoboPlugin\RoboPluginFactoryInterface;
 use Robo\Collection\CollectionBuilder;
 
@@ -83,9 +84,10 @@ class DownloadCommands extends AbstractCommands
               );
           }
         );
-        /** @var \Resilient\Core\RoboPlugin\RoboPluginDownloaderInterface $plugin */
         $plugin = $this->roboPluginFactory->createInstance($type, $pluginConfig);
-        $this->collectionBuilder->addTaskList($plugin->download());
+        if ($plugin instanceof RoboPluginDownloaderInterface) {
+            $this->collectionBuilder->addTaskList($plugin->download());
+        }
         $this->collectionBuilder->addCode(
           function () use ($type) {
               $this->say(

@@ -1,6 +1,6 @@
 command:
   resilient:
-    # What type of project is this? Options: drupal8 | wp | sf
+    # What type of project is this? Options: drupal8 | wp | laravel
     project_type: 'drupal8'
     # Define the framework folder, relative from the project folder.
     frmwrk_root: 'htdocs'

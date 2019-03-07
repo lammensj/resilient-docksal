@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Resilient\Robo\Plugin\Commands;
 
+use Resilient\Core\RoboPlugin\RoboPluginInstallerInterface;
 use Robo\Collection\CollectionBuilder;
 
 /**
@@ -42,9 +43,10 @@ class InstallCommands extends AbstractCommands
               );
           }
         );
-        /** @var \Resilient\Core\RoboPlugin\RoboPluginInstallerInterface $plugin */
         $plugin = $this->roboPluginFactory->createInstance($type, $pluginConfig);
-        $this->collectionBuilder->addTaskList($plugin->install());
+        if ($plugin instanceof RoboPluginInstallerInterface) {
+            $this->collectionBuilder->addTaskList($plugin->install());
+        }
         $this->collectionBuilder->addCode(
           function () use ($type) {
               $this->say(
