@@ -18,6 +18,7 @@ class LaravelRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownload
 {
 
     protected const LARAVEL_PROJECT = 'laravel/laravel';
+    protected const LARAVEL_BACKUP = 'spatie/laravel-backup';
 
     /**
      * {@inheritdoc}
@@ -36,6 +37,9 @@ class LaravelRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownload
                   ->workingDir($this->configFactory->get('project_root'))
                   ->source(self::LARAVEL_PROJECT)
                   ->target($this->configFactory->get('frmwrk_root'));
+                $tasks[] = $this->taskComposerRequire()
+                  ->workingDir($this->configFactory->get('frmwrk_path'))
+                  ->dependency(self::LARAVEL_BACKUP);
             }
 
             // Insert database credentials
