@@ -29,7 +29,7 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
      */
     public function download(): array
     {
-        $wpTasks = [];
+        $tasks = [];
 
         $coreFolderPath = sprintf(
           '%s/%s',
@@ -49,26 +49,26 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
             }
 
             if (file_exists(sprintf('%s/composer.json', $this->configFactory->get('frmwrk_path')))) {
-                $wpTasks[] = $this->taskComposerInstall()
+                $tasks[] = $this->taskComposerInstall()
                   ->workingDir($this->configFactory->get('frmwrk_path'));
                 if ($themeRoot) {
-                    $wpTasks[] = $this->taskComposerInstall()
+                    $tasks[] = $this->taskComposerInstall()
                       ->workingDir($themeDirectory);
                 }
             } else {
-                $wpTasks[] = $this->taskComposerCreateProject()
+                $tasks[] = $this->taskComposerCreateProject()
                   ->workingDir($this->configFactory->get('project_root'))
                   ->source(self::WP_PROJECT)
                   ->target($this->configFactory->get('frmwrk_root'));
 
-                $wpTasks[] = $this->taskComposerRequire()
+                $tasks[] = $this->taskComposerRequire()
                   ->workingDir($this->configFactory->get('frmwrk_path'))
                   ->dependency(self::WP_CLI);
 
                 if ($themeRoot) {
-                    $wpTasks[] = $this->taskFilesystemStack()
+                    $tasks[] = $this->taskFilesystemStack()
                       ->mkdir($themeDirectory);
-                    $wpTasks[] = $this->taskComposerRequire()
+                    $tasks[] = $this->taskComposerRequire()
                       ->workingDir($themeDirectory)
                       ->dependency(self::WP_TIMBER_ST);
                 }
@@ -76,7 +76,7 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
 
             // Install DotEnv package for WP CLI.
             $wpCli = sprintf('%s/vendor/bin/wp', $this->configFactory->get('frmwrk_path'));
-            $wpTasks[] = $this->taskExec(
+            $tasks[] = $this->taskExec(
               sprintf(
                 '%s package install %s',
                 $wpCli,
@@ -108,10 +108,10 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
             $execStack->exec(
               sprintf('%s dotenv salts generate --file=%s', $wpCli, $dotEnvFile)
             );
-            $wpTasks[] = $execStack;
+            $tasks[] = $execStack;
         }
 
-        return $wpTasks;
+        return $tasks;
     }
 
     /**
@@ -129,7 +129,7 @@ class WordpressRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownlo
         );
 
         // Wipe the db.
-        $tasks[] = $this->taskExec(sprintf('%s db reset --yes', $wpCli))
+        $tasks[] = $this->taskExec(sprintf('%s db reset', $wpCli))
           ->option('yes')
           ->option('path', $path, '=');
 

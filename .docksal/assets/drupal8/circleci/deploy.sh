@@ -73,8 +73,10 @@ task_config() {
 
   cp ./app/sites/default/default.services.yml ./app/sites/default/services.yml
   cp ./app/sites/default/default.settings.php ./app/sites/default/settings.php
-  mkdir -p ${PROJECT_ROOT}/shared/backup
+  mkdir -p ${PROJECT_ROOT}/shared/backup/${NEXT}
+  cp ${PROJECT_ROOT}/shared/${BRANCH}.settings.private.php ${PROJECT_ROOT}/shared/backup/${NEXT}/${BRANCH}.settings.private.php
   cp ${PROJECT_ROOT}/shared/${BRANCH}.settings.private.php ./app/sites/default/settings.private.php
+  cp ${PROJECT_ROOT}/shared/${BRANCH}.salt.txt ${PROJECT_ROOT}/shared/backup/${NEXT}/${BRANCH}.salt.txt
   cp ${PROJECT_ROOT}/shared/${BRANCH}.salt.txt salt.txt
 
   INCL_PRVT_SETTINGS='include $app_root . "/" . $site_path . "/settings.private.php";'
@@ -107,7 +109,9 @@ task_config_include_files() {
 #######################################
 task_config_backup() {
   runner_log_notice 'Backing up database...'
-  ${DRUSH} sql-dump --result-file=${PROJECT_ROOT}/shared/backup/${NEXT}.backup.sql --gzip -r ${DRUPAL_ROOT}
+  ${DRUSH} sql-dump --result-file=${PROJECT_ROOT}/shared/backup/${NEXT}/backup.sql --gzip -r ${DRUPAL_ROOT}
+  tar -zcf ${PROJECT_ROOT}/shared/backup/${NEXT}.tar.gz -C ${PROJECT_ROOT}/shared/backup ${NEXT}
+  rm -rf ${PROJECT_ROOT}/shared/backup/${NEXT}
   runner_log_success 'Backing up database... DONE'
 }
 
@@ -162,7 +166,7 @@ task_cleanup() {
   runner_log_notice 'Removing older builds...'
   ls -d ${PROJECT_ROOT}/build-* | head -n -3 | xargs -r chmod -R 777
   ls -d ${PROJECT_ROOT}/build-* | head -n -3 | xargs -r rm -Rf
-  ls -d ${PROJECT_ROOT}/shared/backup/build-* | head -n -6 | xargs -r rm -Rf
+  ls -d ${PROJECT_ROOT}/shared/backup/build-* | head -n -3 | xargs -r rm -Rf
   runner_log_success 'Removing older builds... DONE'
 }
 
@@ -172,9 +176,11 @@ task_cleanup() {
 #######################################
 task_rollback() {
   runner_log_notice 'Rolling back...'
-  gunzip ${PROJECT_ROOT}/shared/backup/${NEXT}.backup.sql.gz
-  ${DRUSH} sql-cli < ${PROJECT_ROOT}/shared/backup/${NEXT}.backup.sql
-  gzip ${PROJECT_ROOT}/shared/backup/${NEXT}.backup.sql
+  mkdir -p ${PROJECT_ROOT}/shared/backup/rollback
+  ls -t ${PROJECT_ROOT}/shared/backup/build-*.tar.gz -t | head -1 | xargs tar -xC ${PROJECT_ROOT}/shared/backup/rollback --strip-components=1 -f
+  [ -f ${PROJECT_ROOT}/shared/backup/rollback/backup.sql.gz ] && gunzip ${PROJECT_ROOT}/shared/backup/rollback/backup.sql.gz || return
+  ${DRUSH} sql-cli < ${PROJECT_ROOT}/shared/backup/rollback/backup.sql
+  rm -rf ${PROJECT_ROOT}/shared/backup/rollback
   runner_log_success 'Rolling back... DONE'
   exit
 }

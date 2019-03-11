@@ -16,7 +16,7 @@ jobs:
       - run:
           name: 'Composer: install root'
           command: composer install --no-dev --prefer-dist
-          working_directory: 'htdocs'
+          working_directory: '[path_to_composer_working_directory]'
       - run:
           name: 'Composer: install theme'
           command: '[ -f composer.lock ] && composer install --no-dev --prefer-dist || echo "No composer.lock available."'
