@@ -14,6 +14,7 @@ use Resilient\Core\Plugins\RoboPlugin\DrupalRoboPlugin;
 use Resilient\Core\Plugins\RoboPlugin\GrumphpRoboPlugin;
 use Resilient\Core\Plugins\RoboPlugin\LaravelRoboPlugin;
 use Resilient\Core\Plugins\RoboPlugin\PhpPackagesRoboPlugin;
+use Resilient\Core\Plugins\RoboPlugin\SymfonyRoboPlugin;
 use Resilient\Core\Plugins\RoboPlugin\WordpressRoboPlugin;
 
 /**
@@ -26,6 +27,7 @@ interface RoboPluginFactoryInterface
     public const PHP_PACKAGES = 'php_packages';
     public const CIRCLE_CI = 'circle_ci';
     public const DRUPAL8 = 'drupal8';
+    public const SYMFONY = 'symfony';
     public const LARAVEL = 'laravel';
     public const WORDPRESS = 'wp';
 
@@ -34,6 +36,7 @@ interface RoboPluginFactoryInterface
       self::PHP_PACKAGES => PhpPackagesRoboPlugin::class,
       self::CIRCLE_CI => CircleCiRoboPlugin::class,
       self::DRUPAL8 => DrupalRoboPlugin::class,
+      self::SYMFONY => SymfonyRoboPlugin::class,
       self::LARAVEL => LaravelRoboPlugin::class,
       self::WORDPRESS => WordpressRoboPlugin::class,
     ];
