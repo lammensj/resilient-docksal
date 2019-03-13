@@ -50,7 +50,7 @@ class DrupalRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownloade
             // Copy local settings files into Drupal directory.
             $source = sprintf(
               '%s/assets/drupal8/core',
-              $this->configFactory->get('setup_path'),
+              $this->configFactory->get('setup_path')
             );
             $tasks[] = $this->taskCopyDir(
               [$source => $defaultFolderPath]

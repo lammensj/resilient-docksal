@@ -30,9 +30,10 @@ parameters:
       detect_key_conflicts: true
     phpcs:
       standard:
-        - ./htdocs/vendor/egosun/symfony-4-code-sniffer/Symfony3Custom
+        - ./vendor/escapestudios/symfony2-coding-standard/Symfony
       ignore_patterns:
-        - .docksal
+        - ./.docksal/
+        - ./RoboFile.php
       triggered_by:
         - test
         - twig
@@ -43,6 +44,7 @@ parameters:
       min_tokens: 15
       exclude:
         - vendor
+        - var
       triggered_by:
         - inc
         - test
@@ -64,6 +66,7 @@ parameters:
       directory: ./htdocs
       exclude:
         - vendor
+        - var
       triggered_by:
         - inc
         - test
@@ -75,7 +78,8 @@ parameters:
         never_use_else: ~
         no_exit_statements: ~
       ignore_patterns:
-        - .docksal
+        - ./.docksal/
+        - RoboFile.php
       triggered_by:
         - inc
         - test
@@ -84,7 +88,8 @@ parameters:
     phpstan:
       level: 7
       ignore_patterns:
-        - .docksal
+        - ./.docksal/
+        - RoboFile.php
       triggered_by:
         - inc
         - test
