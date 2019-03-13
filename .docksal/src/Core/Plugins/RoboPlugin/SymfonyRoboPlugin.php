@@ -36,17 +36,18 @@ class SymfonyRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownload
                   ->workingDir($this->configFactory->get('project_root'))
                   ->source(self::SF_PROJECT)
                   ->target($this->configFactory->get('frmwrk_root'));
-                $dbUrl = sprintf(
-                  'DATABASE_URL=mysql://%s:%s@%s:3306/%s',
-                  $this->configFactory->get('database.user'),
-                  $this->configFactory->get('database.password'),
-                  $this->configFactory->get('database.host'),
-                  $this->configFactory->get('database.name')
-                );
-                $tasks[] = $this->taskReplaceInFile($envFilePath)
-                  ->from('DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name')
-                  ->to($dbUrl);
             }
+
+            $dbUrl = sprintf(
+              'DATABASE_URL=mysql://%s:%s@%s:3306/%s',
+              $this->configFactory->get('database.user'),
+              $this->configFactory->get('database.password'),
+              $this->configFactory->get('database.host'),
+              $this->configFactory->get('database.name')
+            );
+            $tasks[] = $this->taskReplaceInFile($envFilePath)
+              ->from('DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name')
+              ->to($dbUrl);
         }
 
         return $tasks;
