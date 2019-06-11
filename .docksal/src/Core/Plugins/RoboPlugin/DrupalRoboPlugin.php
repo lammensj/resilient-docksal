@@ -44,6 +44,7 @@ class DrupalRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownloade
                 $tasks[] = $this->taskComposerCreateProject()
                   ->workingDir($this->configFactory->get('project_root'))
                   ->source(self::DRUPAL_PROJECT)
+                  ->noInteraction()
                   ->target($this->configFactory->get('frmwrk_root'));
             }
 
