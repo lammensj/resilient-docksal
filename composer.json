@@ -5,7 +5,8 @@
     "license": "GPL-2.0-or-later",
     "authors": [
         {
-            "name": ""
+            "name": "Jasper Lammens",
+            "role": "Owner"
         }
     ],
     "minimum-stability": "dev",

@@ -63,7 +63,14 @@ $config['system.performance']['js']['gzip'] = FALSE;
 
 $settings['hash_salt'] = 'development_salt';
 
-// Disable readonly mode.
-if (PHP_SAPI !== 'cli') {
-  $settings['config_readonly'] = TRUE;
+$config['environment_indicator.indicator']['bg_color'] = '#38ADA9';
+$config['environment_indicator.indicator']['fg_color'] = '#eeeeee';
+$config['environment_indicator.indicator']['name'] = 'Development';
+
+// Enable/disable readonly mode.
+if ($config['environment_indicator.indicator']['name'] !== 'Development') {
+    $settings['config_readonly'] = TRUE;
 }
+
+// Configuration Split
+$config['config_split.config_split.development']['status'] = TRUE;

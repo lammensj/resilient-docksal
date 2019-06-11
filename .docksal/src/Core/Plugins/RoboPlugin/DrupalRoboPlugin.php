@@ -19,7 +19,7 @@ use Symfony\Component\Finder\Finder;
 class DrupalRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownloaderInterface, RoboPluginInstallerInterface
 {
 
-    protected const DRUPAL_PROJECT = 'lammensj/drupal-project:^2.0';
+    protected const DRUPAL_PROJECT = 'lammensj/drupal-project:8.x-dev';
 
     /**
      * {@inheritdoc}
@@ -135,8 +135,9 @@ class DrupalRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownloade
               ->accountName($this->configFactory->get('site.account.name'))
               ->accountMail($this->configFactory->get('site.account.email'))
               ->accountPass($this->configFactory->get('site.account.password'))
-              ->siteInstall('resilient')
-              ->drush('entup');
+              ->siteInstall('resilient');
+            $tasks[] = $this->taskFilesystemStack()
+              ->mkdir(sprintf('%s/config/dev', $this->configFactory->get('frmwrk_path')));
         }
 
         return $tasks;
