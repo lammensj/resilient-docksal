@@ -120,7 +120,7 @@ class DrupalRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownloade
         )) {
             $tasks[] = $this->task($drushStackClass)
               ->drupalRootDirectory($this->configFactory->get('frmwrk_path'))
-              ->drush(sprintf('si resilient', $this->configFactory->get('frmwrk_path')));
+              ->drush('si resilient --existing-config');
         }
         else {
             $tasks[] = $this->task($drushStackClass)
