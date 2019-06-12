@@ -68,6 +68,7 @@ $config['environment_indicator.indicator']['fg_color'] = '#eeeeee';
 $config['environment_indicator.indicator']['name'] = 'Development';
 
 // Enable/disable readonly mode.
+$config_directories['sync'] = '../config/sync';
 if ($config['environment_indicator.indicator']['name'] !== 'Development') {
     $settings['config_readonly'] = TRUE;
 }
