@@ -113,20 +113,14 @@ class DrupalRoboPlugin extends AbstractRoboPlugin implements RoboPluginDownloade
         if ($dbFiles->hasResults()) {
             $tasks[] = $this->task($drushStackClass)
               ->drupalRootDirectory($this->configFactory->get('frmwrk_path'))
-              ->drush(
-                sprintf('sqlq --file=%s', reset($dbFiles)->getPathname())
-              );
-        } elseif (file_exists(
+              ->drush(sprintf('sqlq --file=%s', reset($dbFiles)->getPathname()));
+        }
+        elseif (file_exists(
           sprintf('%s/config/sync/core.extension.yml', $this->configFactory->get('frmwrk_path'))
         )) {
             $tasks[] = $this->task($drushStackClass)
               ->drupalRootDirectory($this->configFactory->get('frmwrk_path'))
-              ->drush(
-                sprintf(
-                  'si config_installer config_installer_sync_configure_form.sync_directory=%s/config/sync',
-                  $this->configFactory->get('frmwrk_path')
-                )
-              );
+              ->drush(sprintf('si resilient', $this->configFactory->get('frmwrk_path')));
         }
         else {
             $tasks[] = $this->task($drushStackClass)
