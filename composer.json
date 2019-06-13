@@ -9,27 +9,8 @@
             "role": "Owner"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "autoload": {
-        "psr-4": {
-            "Resilient\\": "./.docksal/src"
-        }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "sort-packages": true
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "@composer exec robo resilient:scaffold"
-        ],
-        "post-update-cmd": [
-            "@composer exec robo resilient:scaffold"
-        ],
-        "post-create-project-cmd": [
-            "@composer exec robo resilient:scaffold"
-        ]
+    "require": {
+        "lammensj/resilient-robo": "~1.0.0"
     },
     "require-dev": {
         "jakub-onderka/php-parallel-lint": "^1.0",
@@ -46,15 +27,34 @@
         "symfony/var-dumper": "^4.2",
         "wikimedia/composer-merge-plugin": "dev-master"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/lammensj/resilient-robo.git"
+        }
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "@composer exec robo resilient:scaffold"
+        ],
+        "post-update-cmd": [
+            "@composer exec robo resilient:scaffold"
+        ],
+        "post-create-project-cmd": [
+            "@composer exec robo resilient:scaffold"
+        ]
+    },
     "extra": {
         "merge-plugin": {
             "include": [
                 "composer.*.json"
             ]
         }
-    },
-    "require": {
-        "consolidation/robo": "~1",
-        "php-di/php-di": "^6.0"
     }
 }
