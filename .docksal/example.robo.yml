@@ -6,8 +6,6 @@ command:
     frmwrk_root: 'htdocs'
     # Define the application folder of the framework, relative from the framework folder.
     app_root: 'app'
-    # Define the JIRA code.
-    jira_code: 'CUSTOMIZEME'
     # Define the database credentials
     database:
       host: 'db'
